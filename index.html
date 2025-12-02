@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recíbelo Hoy | Tu App de Entrega Local Inmediata</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Azul marino oscuro */
+            color: #f8fafc; /* Blanco roto */
+        }
+        .hero-section {
+            background-image: linear-gradient(to bottom right, #0f172a, #1e3a8a);
+        }
+        .cta-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4); /* Sombra verde */
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sección Principal (Hero) -->
+    <section class="hero-section min-h-screen flex flex-col justify-center items-center p-4">
+        <div class="max-w-4xl w-full text-center py-12 px-6 bg-gray-900/50 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-700/50">
+            
+            <!-- Logo y Tagline -->
+            <div class="mb-8">
+                <h1 class="text-6xl font-extrabold text-green-400 mb-4 tracking-tight md:text-8xl">
+                    ¡RECÍBELO HOY!
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 font-medium">
+                    Tu App para la moda, regalos y productos que necesitas... ¡al instante y sin esperas!
+                </p>
+            </div>
+
+            <!-- Propuesta de Valor -->
+            <div class="grid md:grid-cols-3 gap-8 text-left my-10">
+                <div class="p-4 rounded-xl bg-gray-800/70 border border-gray-700">
+                    <svg class="w-8 h-8 text-green-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h3 class="text-lg font-bold text-white">Cero Espera</h3>
+                    <p class="text-sm text-gray-400">Compra y recibe tu pedido el mismo día, garantizado.</p>
+                </div>
+                <div class="p-4 rounded-xl bg-gray-800/70 border border-gray-700">
+                    <svg class="w-8 h-8 text-green-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <h3 class="text-lg font-bold text-white">Tiendas Locales</h3>
+                    <p class="text-sm text-gray-400">Apoya al comercio de tu ciudad y obtén productos de proximidad.</p>
+                </div>
+                <div class="p-4 rounded-xl bg-gray-800/70 border border-gray-700">
+                    <svg class="w-8 h-8 text-green-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <h3 class="text-lg font-bold text-white">Moda y Más</h3>
+                    <p class="text-sm text-gray-400">Perfecto para regalos de último minuto, ropa o lencería.</p>
+                </div>
+            </div>
+
+            <!-- Formulario de Captura de Leads (Lista de Espera) -->
+            <h2 class="text-3xl font-semibold mt-10 mb-6 text-white">Sé el primero en usarla</h2>
+            <p class="mb-8 text-gray-300">¡Estamos a punto de lanzarla! Inscríbete a la lista de espera para acceso anticipado y descuentos exclusivos.</p>
+            
+            <form id="leadForm" class="flex flex-col md:flex-row gap-4 justify-center">
+                <input type="email" id="emailInput" placeholder="Introduce tu email aquí" required 
+                       class="p-4 w-full md:w-96 rounded-xl bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-green-400 focus:border-green-400 text-white placeholder-gray-400 transition duration-300 shadow-inner">
+                
+                <button type="submit" id="submitButton"
+                        class="cta-button p-4 w-full md:w-48 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition duration-300 ease-in-out uppercase text-lg">
+                    ¡Quiero Acceso!
+                </button>
+            </form>
+
+            <!-- Mensaje de Confirmación (Oculto inicialmente) -->
+            <div id="confirmationMessage" class="mt-8 p-4 rounded-xl hidden transition duration-500">
+                <!-- El contenido de este div se actualizará por JS -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-gray-500 text-sm border-t border-gray-800">
+        &copy; 2025 CercaYAhora. Todos los derechos reservados.
+    </footer>
+
+    <!-- Bloque de Lógica Firebase (Modular SDKs) -->
+    <script type="module">
+        // Importaciones de los módulos necesarios (Auth y Firestore)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // 1. Configuración de Variables Globales (MANDATORIO)
+        // Usamos las variables inyectadas por el entorno para la configuración
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // Elementos del DOM
+        const leadForm = document.getElementById('leadForm');
+        const emailInput = document.getElementById('emailInput');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const submitButton = document.getElementById('submitButton');
+
+        let db; // Variable para almacenar la instancia de Firestore
+
+        // Función para mostrar mensajes de estado (Reemplaza a alert())
+        function displayMessage(isSuccess, message) {
+            confirmationMessage.classList.remove('hidden', 'bg-red-800/50', 'bg-green-800/50');
+            confirmationMessage.classList.add(isSuccess ? 'bg-green-800/50' : 'bg-red-800/50');
+            confirmationMessage.innerHTML = `
+                <p class="font-semibold text-lg ${isSuccess ? 'text-green-200' : 'text-red-200'}">${message}</p>
+            `;
+            // Ocultar formulario al éxito para evitar envíos duplicados
+            if (isSuccess) {
+                leadForm.style.display = 'none';
+            }
+        }
+
+        // 2. Inicialización de Firebase y Autenticación
+        async function initializeFirebase() {
+            try {
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.error("Error: firebaseConfig está vacío. La integración de Firebase podría fallar.");
+                    return;
+                }
+                
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Autenticación Anónima (necesaria para las reglas de seguridad)
+                await signInAnonymously(auth);
+                console.log("Firebase inicializado y usuario anónimo autenticado.");
+                
+            } catch (error) {
+                console.error("Error al inicializar o autenticar Firebase:", error);
+                displayMessage(false, "Error de inicialización de la base de datos.");
+            }
+        }
+
+        // 3. Función para guardar el Email en Firestore
+        async function saveSubscriber(email) {
+            if (!db) {
+                displayMessage(false, "El sistema de base de datos no está listo. Inténtalo de nuevo.");
+                return;
+            }
+
+            try {
+                // Ruta pública OBLIGATORIA: /artifacts/{appId}/public/data/subscribers
+                const collectionPath = `artifacts/${appId}/public/data/subscribers`;
+                
+                await addDoc(collection(db, collectionPath), {
+                    email: email,
+                    timestamp: serverTimestamp(), // Fecha y hora del servidor
+                    source: 'landing_page_validation'
+                });
+
+                displayMessage(true, "¡Gracias! Estás en la lista. Te avisaremos pronto. 🎉");
+
+            } catch (error) {
+                console.error("Error al guardar el email en Firestore:", error);
+                displayMessage(false, "Hubo un error al registrarte. Inténtalo de nuevo.");
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = '¡Quiero Acceso!';
+            }
+        }
+
+
+        // 4. Conexión de la API al Formulario (Manejo del Evento)
+        leadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = emailInput.value.trim();
+            if (!email || !/\S+@\S+\.\S+/.test(email)) { // Validación básica de email
+                displayMessage(false, "Por favor, introduce un correo electrónico válido.");
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Registrando...';
+
+            await saveSubscriber(email);
+        });
+
+        // 5. Iniciar la aplicación al cargar la ventana
+        window.addEventListener('load', initializeFirebase);
+        
+    </script>
+
+</body>
+</html>
