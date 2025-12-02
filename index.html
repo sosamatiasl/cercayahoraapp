@@ -1,122 +1,89 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recíbelo Hoy | Tu App de Entrega Local Inmediata</title>
-    <!-- Carga de Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        /* Estilos personalizados */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* Azul marino oscuro */
-            color: #f8fafc; /* Blanco roto */
-        }
-        .hero-section {
-            background-image: linear-gradient(to bottom right, #0f172a, #1e3a8a);
-        }
-        .cta-button {
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4); /* Sombra verde */
-        }
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.6);
-        }
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/12.6.0/firebase-app-compat.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/12.6.0/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-database-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-functions-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-messaging-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-storage-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-analytics-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-remote-config-compat.js"></script>
+    <script defer src="/__/firebase/12.6.0/firebase-performance-compat.js"></script>
+    <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+
+    <style media="screen">
+      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
+      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
+      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
+      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
+      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
+      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
+      @media (max-width: 600px) {
+        body, #message { margin-top: 0; background: white; box-shadow: none; }
+        body { border-top: 16px solid #ffa100; }
+      }
     </style>
-</head>
-<body>
-
-    <!-- Sección Principal (Hero) -->
-    <section class="hero-section min-h-screen flex flex-col justify-center items-center p-4">
-        <div class="max-w-4xl w-full text-center py-12 px-6 bg-gray-900/50 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-700/50">
-            
-            <!-- Logo y Tagline -->
-            <div class="mb-8">
-                <h1 class="text-6xl font-extrabold text-green-400 mb-4 tracking-tight md:text-8xl">
-                    ¡RECÍBELO HOY!
-                </h1>
-                <p class="text-xl md:text-2xl text-gray-300 font-medium">
-                    Tu App para la moda, regalos y productos que necesitas... ¡al instante y sin esperas!
-                </p>
-            </div>
-
-            <!-- Propuesta de Valor -->
-            <div class="grid md:grid-cols-3 gap-8 text-left my-10">
-                <div class="p-4 rounded-xl bg-gray-800/70 border border-gray-700">
-                    <svg class="w-8 h-8 text-green-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <h3 class="text-lg font-bold text-white">Cero Espera</h3>
-                    <p class="text-sm text-gray-400">Compra y recibe tu pedido el mismo día, garantizado.</p>
-                </div>
-                <div class="p-4 rounded-xl bg-gray-800/70 border border-gray-700">
-                    <svg class="w-8 h-8 text-green-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <h3 class="text-lg font-bold text-white">Tiendas Locales</h3>
-                    <p class="text-sm text-gray-400">Apoya al comercio de tu ciudad y obtén productos de proximidad.</p>
-                </div>
-                <div class="p-4 rounded-xl bg-gray-800/70 border border-gray-700">
-                    <svg class="w-8 h-8 text-green-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    <h3 class="text-lg font-bold text-white">Moda y Más</h3>
-                    <p class="text-sm text-gray-400">Perfecto para regalos de último minuto, ropa o lencería.</p>
-                </div>
-            </div>
-
-            <!-- Formulario de Captura de Leads (Lista de Espera) -->
-            <h2 class="text-3xl font-semibold mt-10 mb-6 text-white">Sé el primero en usarla</h2>
-            <p class="mb-8 text-gray-300">¡Estamos a punto de lanzarla! Inscríbete a la lista de espera para acceso anticipado y descuentos exclusivos.</p>
-            
-            <form id="leadForm" class="flex flex-col md:flex-row gap-4 justify-center">
-                <input type="email" id="emailInput" placeholder="Introduce tu email aquí" required 
-                       class="p-4 w-full md:w-96 rounded-xl bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-green-400 focus:border-green-400 text-white placeholder-gray-400 transition duration-300 shadow-inner">
-                
-                <button type="submit" 
-                        class="cta-button p-4 w-full md:w-48 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition duration-300 ease-in-out uppercase text-lg">
-                    ¡Quiero Acceso!
-                </button>
-            </form>
-
-            <!-- Mensaje de Confirmación (Oculto inicialmente) -->
-            <div id="confirmationMessage" class="mt-8 p-4 bg-green-800/50 rounded-xl hidden">
-                <p class="font-semibold text-lg text-green-200">¡Gracias! Estás en la lista. Te avisaremos pronto. 🎉</p>
-                <p class="text-sm text-green-300 mt-1">Revisa tu bandeja de entrada para confirmar la suscripción.</p>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="text-center py-6 text-gray-500 text-sm border-t border-gray-800">
-        &copy; 2025 CercaYAhora. Todos los derechos reservados.
-    </footer>
+  </head>
+  <body>
+    <div id="message">
+      <h2>Welcome</h2>
+      <h1>Firebase Hosting Setup Complete</h1>
+      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
+      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+    </div>
+    <p id="load">Firebase SDK Loading&hellip;</p>
 
     <script>
-        // Función para manejar la simulación de envío del formulario (MVP)
-        document.getElementById('leadForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Previene el envío real del formulario
+      document.addEventListener('DOMContentLoaded', function() {
+        const loadEl = document.querySelector('#load');
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        // // The Firebase SDK is initialized and available here!
+        //
+        // firebase.auth().onAuthStateChanged(user => { });
+        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+        // firebase.firestore().doc('/foo/bar').get().then(() => { });
+        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
+        // firebase.messaging().requestPermission().then(() => { });
+        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+        // firebase.analytics(); // call to activate
+        // firebase.analytics().logEvent('tutorial_completed');
+        // firebase.performance(); // call to activate
+        //
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
-            const emailInput = document.getElementById('emailInput');
-            const confirmationMessage = document.getElementById('confirmationMessage');
-            
-            // Simulación de envío exitoso
-            console.log('Lead capturado (Simulación): ' + emailInput.value);
-
-            // Oculta el formulario y muestra el mensaje de confirmación
-            this.style.display = 'none';
-            confirmationMessage.classList.remove('hidden');
-
-            // En un entorno real, aquí se haría un fetch() al servidor para guardar el email.
-            // Para la validación, la métrica clave se mide en Meta Ads (la conversión al hacer clic y ver el mensaje).
-        });
-
-        // Configuración de accesibilidad (simulación de focus en el input al cargar la página)
-        window.onload = () => {
-             document.getElementById('emailInput').focus();
-        };
-
+        try {
+          let app = firebase.app();
+          let features = [
+            'auth', 
+            'database', 
+            'firestore',
+            'functions',
+            'messaging', 
+            'storage', 
+            'analytics', 
+            'remoteConfig',
+            'performance',
+          ].filter(feature => typeof app[feature] === 'function');
+          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
+        } catch (e) {
+          console.error(e);
+          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+        }
+      });
     </script>
-
-</body>
+  </body>
 </html>
