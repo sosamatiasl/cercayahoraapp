@@ -72,9 +72,9 @@
                 <input type="email" id="emailInput" placeholder="Introduce tu email aquí" required 
                        class="p-4 w-full md:w-96 rounded-xl bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-green-400 focus:border-green-400 text-white placeholder-gray-400 transition duration-300 shadow-inner">
                 
-                <button type="submit" id="submitButton"
-                        class="cta-button p-4 w-full md:w-48 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition duration-300 ease-in-out uppercase text-lg">
-                    ¡Quiero Acceso!
+                <button type="submit" id="submitButton" disabled 
+                        class="cta-button p-4 w-full md:w-48 bg-gray-500 text-white font-bold rounded-xl transition duration-300 ease-in-out uppercase text-lg cursor-not-allowed">
+                    Cargando Base de Datos...
                 </button>
             </form>
 
@@ -99,7 +99,6 @@
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // 1. Configuración de Variables Globales (MANDATORIO)
-        // Usamos las variables inyectadas por el entorno para la configuración
         const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
@@ -111,47 +110,64 @@
 
         let db; // Variable para almacenar la instancia de Firestore
 
-        // Función para mostrar mensajes de estado (Reemplaza a alert())
+        // Función para mostrar mensajes de estado
         function displayMessage(isSuccess, message) {
             confirmationMessage.classList.remove('hidden', 'bg-red-800/50', 'bg-green-800/50');
             confirmationMessage.classList.add(isSuccess ? 'bg-green-800/50' : 'bg-red-800/50');
             confirmationMessage.innerHTML = `
                 <p class="font-semibold text-lg ${isSuccess ? 'text-green-200' : 'text-red-200'}">${message}</p>
             `;
-            // Ocultar formulario al éxito para evitar envíos duplicados
             if (isSuccess) {
                 leadForm.style.display = 'none';
             }
         }
 
-        // 2. Inicialización de Firebase y Autenticación
+        // 2. Inicialización de Firebase y Autenticación (Asegura la carga)
         async function initializeFirebase() {
             try {
                 if (Object.keys(firebaseConfig).length === 0) {
                     console.error("Error: firebaseConfig está vacío. La integración de Firebase podría fallar.");
-                    return;
+                    throw new Error("Configuración de Firebase no encontrada.");
                 }
                 
                 const app = initializeApp(firebaseConfig);
                 const auth = getAuth(app);
+                
+                // Configurar Firestore
                 db = getFirestore(app);
 
-                // Autenticación Anónima (necesaria para las reglas de seguridad)
+                // Autenticación Anónima (esperamos a que termine)
                 await signInAnonymously(auth);
-                console.log("Firebase inicializado y usuario anónimo autenticado.");
                 
+                console.log("Firebase inicializado y usuario anónimo autenticado. La base de datos está lista.");
+                
+                // HABILITAR EL BOTÓN SOLO CUANDO LA BD ESTÉ LISTA Y AUTENTICADA
+                submitButton.disabled = false;
+                submitButton.textContent = '¡Quiero Acceso!';
+                submitButton.classList.remove('bg-gray-500', 'cursor-not-allowed');
+                submitButton.classList.add('bg-green-600', 'hover:bg-green-700');
+
+
             } catch (error) {
                 console.error("Error al inicializar o autenticar Firebase:", error);
-                displayMessage(false, "Error de inicialización de la base de datos.");
+                // Si falla, el botón permanece deshabilitado y mostramos un error
+                displayMessage(false, "Error: No pudimos conectar con la base de datos. Inténtalo más tarde.");
+                submitButton.textContent = 'Error de Conexión';
             }
         }
 
         // 3. Función para guardar el Email en Firestore
         async function saveSubscriber(email) {
+            // Esta comprobación ahora es redundante si initializeFirebase fue exitoso, 
+            // pero la mantenemos como medida de seguridad.
             if (!db) {
-                displayMessage(false, "El sistema de base de datos no está listo. Inténtalo de nuevo.");
+                displayMessage(false, "El sistema de base de datos no está listo. Por favor, recarga la página.");
                 return;
             }
+
+            // Deshabilitar el botón al iniciar el guardado
+            submitButton.disabled = true;
+            submitButton.textContent = 'Registrando...';
 
             try {
                 // Ruta pública OBLIGATORIA: /artifacts/{appId}/public/data/subscribers
@@ -169,8 +185,11 @@
                 console.error("Error al guardar el email en Firestore:", error);
                 displayMessage(false, "Hubo un error al registrarte. Inténtalo de nuevo.");
             } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = '¡Quiero Acceso!';
+                // Solo re-habilitamos si no hubo éxito (para permitir reintentar)
+                if (leadForm.style.display !== 'none') {
+                    submitButton.disabled = false;
+                    submitButton.textContent = '¡Quiero Acceso!';
+                }
             }
         }
 
@@ -185,13 +204,11 @@
                 return;
             }
 
-            submitButton.disabled = true;
-            submitButton.textContent = 'Registrando...';
-
             await saveSubscriber(email);
         });
 
         // 5. Iniciar la aplicación al cargar la ventana
+        // Iniciamos con el botón deshabilitado hasta que Firebase esté listo.
         window.addEventListener('load', initializeFirebase);
         
     </script>
