@@ -6,9 +6,6 @@
     <title>Recíbelo Hoy | Tu App de Entrega Local Inmediata</title>
     <!-- Carga de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase SDKs - CDN version, use npm for production apps -->
-    <script src="https://www.gstatic.com/firebasejs/14.26.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/14.26.0/firebase-firestore-compat.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -75,16 +72,15 @@
                 <input type="email" id="emailInput" placeholder="Introduce tu email aquí" required 
                        class="p-4 w-full md:w-96 rounded-xl bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-green-400 focus:border-green-400 text-white placeholder-gray-400 transition duration-300 shadow-inner">
                 
-                <button type="submit" 
+                <button type="submit" id="submitButton"
                         class="cta-button p-4 w-full md:w-48 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition duration-300 ease-in-out uppercase text-lg">
                     ¡Quiero Acceso!
                 </button>
             </form>
 
             <!-- Mensaje de Confirmación (Oculto inicialmente) -->
-            <div id="confirmationMessage" class="mt-8 p-4 bg-green-800/50 rounded-xl hidden">
-                <p class="font-semibold text-lg text-green-200">¡Gracias! Estás en la lista. Te avisaremos pronto. 🎉</p>
-                <p class="text-sm text-green-300 mt-1">Revisa tu bandeja de entrada para confirmar la suscripción.</p>
+            <div id="confirmationMessage" class="mt-8 p-4 rounded-xl hidden transition duration-500">
+                <!-- El contenido de este div se actualizará por JS -->
             </div>
 
         </div>
@@ -95,30 +91,109 @@
         &copy; 2025 CercaYAhora. Todos los derechos reservados.
     </footer>
 
-    <script>
-        // Función para manejar la simulación de envío del formulario (MVP)
-        document.getElementById('leadForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Previene el envío real del formulario
+    <!-- Bloque de Lógica Firebase (Modular SDKs) -->
+    <script type="module">
+        // Importaciones de los módulos necesarios (Auth y Firestore)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-            const emailInput = document.getElementById('emailInput');
-            const confirmationMessage = document.getElementById('confirmationMessage');
-            
-            // Simulación de envío exitoso
-            console.log('Lead capturado (Simulación): ' + emailInput.value);
+        // 1. Configuración de Variables Globales (MANDATORIO)
+        // Usamos las variables inyectadas por el entorno para la configuración
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-            // Oculta el formulario y muestra el mensaje de confirmación
-            this.style.display = 'none';
-            confirmationMessage.classList.remove('hidden');
+        // Elementos del DOM
+        const leadForm = document.getElementById('leadForm');
+        const emailInput = document.getElementById('emailInput');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const submitButton = document.getElementById('submitButton');
 
-            // En un entorno real, aquí se haría un fetch() al servidor para guardar el email.
-            // Para la validación, la métrica clave se mide en Meta Ads (la conversión al hacer clic y ver el mensaje).
+        let db; // Variable para almacenar la instancia de Firestore
+
+        // Función para mostrar mensajes de estado (Reemplaza a alert())
+        function displayMessage(isSuccess, message) {
+            confirmationMessage.classList.remove('hidden', 'bg-red-800/50', 'bg-green-800/50');
+            confirmationMessage.classList.add(isSuccess ? 'bg-green-800/50' : 'bg-red-800/50');
+            confirmationMessage.innerHTML = `
+                <p class="font-semibold text-lg ${isSuccess ? 'text-green-200' : 'text-red-200'}">${message}</p>
+            `;
+            // Ocultar formulario al éxito para evitar envíos duplicados
+            if (isSuccess) {
+                leadForm.style.display = 'none';
+            }
+        }
+
+        // 2. Inicialización de Firebase y Autenticación
+        async function initializeFirebase() {
+            try {
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.error("Error: firebaseConfig está vacío. La integración de Firebase podría fallar.");
+                    return;
+                }
+                
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Autenticación Anónima (necesaria para las reglas de seguridad)
+                await signInAnonymously(auth);
+                console.log("Firebase inicializado y usuario anónimo autenticado.");
+                
+            } catch (error) {
+                console.error("Error al inicializar o autenticar Firebase:", error);
+                displayMessage(false, "Error de inicialización de la base de datos.");
+            }
+        }
+
+        // 3. Función para guardar el Email en Firestore
+        async function saveSubscriber(email) {
+            if (!db) {
+                displayMessage(false, "El sistema de base de datos no está listo. Inténtalo de nuevo.");
+                return;
+            }
+
+            try {
+                // Ruta pública OBLIGATORIA: /artifacts/{appId}/public/data/subscribers
+                const collectionPath = `artifacts/${appId}/public/data/subscribers`;
+                
+                await addDoc(collection(db, collectionPath), {
+                    email: email,
+                    timestamp: serverTimestamp(), // Fecha y hora del servidor
+                    source: 'landing_page_validation'
+                });
+
+                displayMessage(true, "¡Gracias! Estás en la lista. Te avisaremos pronto. 🎉");
+
+            } catch (error) {
+                console.error("Error al guardar el email en Firestore:", error);
+                displayMessage(false, "Hubo un error al registrarte. Inténtalo de nuevo.");
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = '¡Quiero Acceso!';
+            }
+        }
+
+
+        // 4. Conexión de la API al Formulario (Manejo del Evento)
+        leadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = emailInput.value.trim();
+            if (!email || !/\S+@\S+\.\S+/.test(email)) { // Validación básica de email
+                displayMessage(false, "Por favor, introduce un correo electrónico válido.");
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Registrando...';
+
+            await saveSubscriber(email);
         });
 
-        // Configuración de accesibilidad (simulación de focus en el input al cargar la página)
-        window.onload = () => {
-             document.getElementById('emailInput').focus();
-        };
-
+        // 5. Iniciar la aplicación al cargar la ventana
+        window.addEventListener('load', initializeFirebase);
+        
     </script>
 
 </body>
