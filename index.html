@@ -64,7 +64,7 @@
                 </div>
             </div>
 
-            <!-- Formulario de Captura de Leads (Lista de Espera) -->
+            <!-- Formulario de Captura de Leads -->
             <h2 class="text-3xl font-semibold mt-10 mb-6 text-white">Sé el primero en usarla</h2>
             <p class="mb-8 text-gray-300">¡Estamos a punto de lanzarla! Inscríbete a la lista de espera para acceso anticipado y descuentos exclusivos.</p>
             
@@ -72,9 +72,9 @@
                 <input type="email" id="emailInput" placeholder="Introduce tu email aquí" required 
                        class="p-4 w-full md:w-96 rounded-xl bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-green-400 focus:border-green-400 text-white placeholder-gray-400 transition duration-300 shadow-inner">
                 
-                <button type="submit" id="submitButton" disabled 
-                        class="cta-button p-4 w-full md:w-48 bg-gray-500 text-white font-bold rounded-xl transition duration-300 ease-in-out uppercase text-lg cursor-not-allowed">
-                    Cargando Base de Datos...
+                <button type="submit" id="submitButton"
+                        class="cta-button p-4 w-full md:w-48 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition duration-300 ease-in-out uppercase text-lg">
+                    ¡Quiero Acceso!
                 </button>
             </form>
 
@@ -91,16 +91,12 @@
         &copy; 2025 CercaYAhora. Todos los derechos reservados.
     </footer>
 
-    <!-- Bloque de Lógica Firebase (Modular SDKs) -->
+    <!-- Bloque de Lógica Firebase (Modular SDKs + Auto Config) -->
     <script type="module">
-        // Importaciones de los módulos necesarios (Auth y Firestore)
+        // Importaciones de los módulos necesarios
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // 1. Configuración de Variables Globales (MANDATORIO)
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
         // Elementos del DOM
         const leadForm = document.getElementById('leadForm');
@@ -108,109 +104,95 @@
         const confirmationMessage = document.getElementById('confirmationMessage');
         const submitButton = document.getElementById('submitButton');
 
-        let db; // Variable para almacenar la instancia de Firestore
+        let db; // Instancia de Firestore
+        let auth; // Instancia de Auth
 
-        // Función para mostrar mensajes de estado
+        // UI: Mostrar mensajes
         function displayMessage(isSuccess, message) {
             confirmationMessage.classList.remove('hidden', 'bg-red-800/50', 'bg-green-800/50');
             confirmationMessage.classList.add(isSuccess ? 'bg-green-800/50' : 'bg-red-800/50');
-            confirmationMessage.innerHTML = `
-                <p class="font-semibold text-lg ${isSuccess ? 'text-green-200' : 'text-red-200'}">${message}</p>
-            `;
-            if (isSuccess) {
-                leadForm.style.display = 'none';
-            }
+            confirmationMessage.innerHTML = `<p class="font-semibold text-lg ${isSuccess ? 'text-green-200' : 'text-red-200'}">${message}</p>`;
+            if (isSuccess) leadForm.style.display = 'none';
         }
 
-        // 2. Inicialización de Firebase y Autenticación (Asegura la carga)
+        // 1. Inicialización SEGURA y AUTOMÁTICA
         async function initializeFirebase() {
             try {
-                if (Object.keys(firebaseConfig).length === 0) {
-                    console.error("Error: firebaseConfig está vacío. La integración de Firebase podría fallar.");
-                    throw new Error("Configuración de Firebase no encontrada.");
+                // Paso A: Pedir la configuración al servidor de Firebase Hosting
+                // Esta ruta '/__/firebase/init.json' es mágica: solo existe cuando 
+                // despliegas la app o usas 'firebase serve'.
+                const response = await fetch('/__/firebase/init.json');
+                
+                if (!response.ok) {
+                    throw new Error("No se pudo cargar la configuración de Firebase. ¿Estás ejecutando esto localmente sin 'firebase serve'?");
                 }
+
+                const firebaseConfig = await response.json();
                 
+                // Paso B: Inicializar la App con la configuración recibida
                 const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
-                
-                // Configurar Firestore
+                auth = getAuth(app);
                 db = getFirestore(app);
 
-                // Autenticación Anónima (esperamos a que termine)
+                // Paso C: Autenticación Anónima (Vital para las reglas de seguridad)
                 await signInAnonymously(auth);
-                
-                console.log("Firebase inicializado y usuario anónimo autenticado. La base de datos está lista.");
-                
-                // HABILITAR EL BOTÓN SOLO CUANDO LA BD ESTÉ LISTA Y AUTENTICADA
-                submitButton.disabled = false;
-                submitButton.textContent = '¡Quiero Acceso!';
-                submitButton.classList.remove('bg-gray-500', 'cursor-not-allowed');
-                submitButton.classList.add('bg-green-600', 'hover:bg-green-700');
-
+                console.log("✅ Conectado a Firebase de forma segura y anónima.");
 
             } catch (error) {
-                console.error("Error al inicializar o autenticar Firebase:", error);
-                // Si falla, el botón permanece deshabilitado y mostramos un error
-                displayMessage(false, "Error: No pudimos conectar con la base de datos. Inténtalo más tarde.");
-                submitButton.textContent = 'Error de Conexión';
+                console.error("❌ Error de Inicialización:", error);
+                // Si falla (ej. abriendo el archivo localmente), mostramos un error amigable en consola
+                if (window.location.hostname === 'localhost' || window.location.protocol === 'file:') {
+                    console.warn("⚠️ AVISO: Para probar esto localmente, usa el comando 'firebase serve' en tu terminal.");
+                }
+                displayMessage(false, "Error de conexión con el sistema. Intenta más tarde.");
             }
         }
 
-        // 3. Función para guardar el Email en Firestore
+        // 2. Guardar datos en Firestore
         async function saveSubscriber(email) {
-            // Esta comprobación ahora es redundante si initializeFirebase fue exitoso, 
-            // pero la mantenemos como medida de seguridad.
             if (!db) {
-                displayMessage(false, "El sistema de base de datos no está listo. Por favor, recarga la página.");
+                displayMessage(false, "El sistema no está listo. Recarga la página.");
                 return;
             }
 
-            // Deshabilitar el botón al iniciar el guardado
-            submitButton.disabled = true;
-            submitButton.textContent = 'Registrando...';
-
             try {
-                // Ruta pública OBLIGATORIA: /artifacts/{appId}/public/data/subscribers
-                const collectionPath = `artifacts/${appId}/public/data/subscribers`;
-                
-                await addDoc(collection(db, collectionPath), {
+                // Usamos la colección simple 'subscribers'
+                await addDoc(collection(db, "subscribers"), {
                     email: email,
-                    timestamp: serverTimestamp(), // Fecha y hora del servidor
-                    source: 'landing_page_validation'
+                    timestamp: serverTimestamp(),
+                    source: 'landing_page'
                 });
 
                 displayMessage(true, "¡Gracias! Estás en la lista. Te avisaremos pronto. 🎉");
 
             } catch (error) {
-                console.error("Error al guardar el email en Firestore:", error);
+                console.error("❌ Error al guardar:", error);
+                // Tip común: Si dice "permission-denied", es que no habilitaste Auth Anónimo o las reglas están mal.
                 displayMessage(false, "Hubo un error al registrarte. Inténtalo de nuevo.");
             } finally {
-                // Solo re-habilitamos si no hubo éxito (para permitir reintentar)
-                if (leadForm.style.display !== 'none') {
-                    submitButton.disabled = false;
-                    submitButton.textContent = '¡Quiero Acceso!';
-                }
+                submitButton.disabled = false;
+                submitButton.textContent = '¡Quiero Acceso!';
             }
         }
 
-
-        // 4. Conexión de la API al Formulario (Manejo del Evento)
+        // 3. Manejar el envío del formulario
         leadForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-
             const email = emailInput.value.trim();
-            if (!email || !/\S+@\S+\.\S+/.test(email)) { // Validación básica de email
-                displayMessage(false, "Por favor, introduce un correo electrónico válido.");
+            
+            // Validación simple de email
+            if (!email || !/\S+@\S+\.\S+/.test(email)) {
+                displayMessage(false, "Por favor, introduce un correo válido.");
                 return;
             }
 
+            submitButton.disabled = true;
+            submitButton.textContent = 'Registrando...';
             await saveSubscriber(email);
         });
 
-        // 5. Iniciar la aplicación al cargar la ventana
-        // Iniciamos con el botón deshabilitado hasta que Firebase esté listo.
+        // Arrancar todo al cargar
         window.addEventListener('load', initializeFirebase);
-        
     </script>
 
 </body>
