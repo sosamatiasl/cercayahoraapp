@@ -17,15 +17,15 @@
             color: #f8fafc; /* Blanco roto */
         }
         .hero-section {
-            background-image: linear-gradient(to bottom right, #0f172a, #1e3a8a);
+            background-image: linear-gradient(to bottom right, #FFB75E, #ED8F03);
         }
         .cta-button {
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4); /* Sombra verde */
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
         }
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(22, 163, 74, 0.6);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
         }
     </style>
 </head>
@@ -37,7 +37,7 @@
             
             <!-- Logo y Tagline -->
             <div class="mb-8">
-                <h1 class="text-6xl font-extrabold text-green-400 mb-4 tracking-tight md:text-8xl">
+                <h1 class="text-6xl font-extrabold text-orange-500 mb-4 tracking-tight md:text-8xl">
                     ¡RECÍBELO HOY!
                 </h1>
                 <p class="text-xl md:text-2xl text-gray-300 font-medium">
@@ -48,17 +48,17 @@
             <!-- Propuesta de Valor -->
             <div class="grid md:grid-cols-3 gap-8 text-left my-10">
                 <div class="p-4 rounded-xl bg-gray-800/70 border border-gray-700">
-                    <svg class="w-8 h-8 text-green-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-8 h-8 text-orange-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <h3 class="text-lg font-bold text-white">Cero Espera</h3>
                     <p class="text-sm text-gray-400">Compra y recibe tu pedido el mismo día, garantizado.</p>
                 </div>
                 <div class="p-4 rounded-xl bg-gray-800/70 border border-gray-700">
-                    <svg class="w-8 h-8 text-green-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <svg class="w-8 h-8 text-orange-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     <h3 class="text-lg font-bold text-white">Tiendas Locales</h3>
                     <p class="text-sm text-gray-400">Apoya al comercio de tu ciudad y obtén productos de proximidad.</p>
                 </div>
                 <div class="p-4 rounded-xl bg-gray-800/70 border border-gray-700">
-                    <svg class="w-8 h-8 text-green-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <svg class="w-8 h-8 text-orange-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     <h3 class="text-lg font-bold text-white">Moda y Más</h3>
                     <p class="text-sm text-gray-400">Perfecto para regalos de último minuto, ropa o lencería.</p>
                 </div>
@@ -70,10 +70,10 @@
             
             <form id="leadForm" class="flex flex-col md:flex-row gap-4 justify-center">
                 <input type="email" id="emailInput" placeholder="Introduce tu email aquí" required 
-                       class="p-4 w-full md:w-96 rounded-xl bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-green-400 focus:border-green-400 text-white placeholder-gray-400 transition duration-300 shadow-inner">
+                       class="p-4 w-full md:w-96 rounded-xl bg-gray-800 border border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-green-400 text-white placeholder-gray-400 transition duration-300 shadow-inner">
                 
                 <button type="submit" id="submitButton"
-                        class="cta-button p-4 w-full md:w-48 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition duration-300 ease-in-out uppercase text-lg">
+                        class="cta-button p-4 w-full md:w-48 bg-orange-600 hover:bg-blue-700 text-white font-bold rounded-xl transition duration-300 ease-in-out uppercase text-lg">
                     ¡Quiero Acceso!
                 </button>
             </form>
@@ -89,7 +89,7 @@
     <!-- Footer -->
     <footer class="text-center py-6 text-gray-500 text-sm border-t border-gray-800">
         &copy; 2025 CercaYAhora. Todos los derechos reservados.
-        <a href="politica-privacidad.html" class="text-green-400 hover:text-green-500 ml-4 transition">Política de Privacidad</a>
+        <a href="politica-privacidad.html" class="text-orange-500 hover:text-blue-500 ml-4 transition">Política de Privacidad</a>
     </footer>
 
     <!-- Bloque de Lógica Firebase (Modular SDKs + Auto Config) -->
